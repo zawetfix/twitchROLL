@@ -155,43 +155,71 @@ input[type=text]::placeholder { color: var(--text-dim); }
 /* ── MIDDLE ── */
 .mid { display: flex; flex-direction: column; gap: 12px; overflow: hidden; min-width: 0; }
 
-/* ── WINNER PANEL (отдельная панель сверху) ── */
-.winner-panel {
+/* ── WINNER OVERLAY (плавающий блок поверх всего сайта) ── */
+#winner-overlay {
   display: none;
-  flex-shrink: 0;
-  flex-direction: column;
-  max-height: 45%;
-  min-height: 220px;
-  animation: slideDown .35s ease;
-  border-color: var(--border2);
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(0,0,0,.85);
+  backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+  padding: 24px;
+  animation: mfade .25s ease;
 }
-.winner-panel.show { display: flex; }
-@keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:none} }
+#winner-overlay.show { display: flex; }
+
+.win-card {
+  background: linear-gradient(160deg, #141414 0%, #0d0d0d 60%, #0a0a0a 100%);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  width: 100%; max-width: 720px;
+  max-height: 85vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 40px 100px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.02) inset;
+  animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+  overflow: hidden;
+  position: relative;
+}
+
+.win-close {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border2);
+  background: rgba(0,0,0,.4);
+  color: var(--text-mid);
+  font-size: 18px; line-height: 1;
+  cursor: pointer; z-index: 5;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s;
+  font-family: 'Inter', sans-serif;
+}
+.win-close:hover { border-color: var(--red); color: var(--red); background: rgba(176,64,64,.15); }
 
 .wb-banner {
-  background: linear-gradient(160deg, #1a1a1a 0%, #0e0e0e 100%);
-  padding: 16px 22px;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  background: linear-gradient(160deg, #1c1c1c 0%, #0e0e0e 100%);
+  padding: 32px 28px 26px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
   border-bottom: 1px solid var(--border);
   position: relative; overflow: hidden;
 }
 .wb-banner::before {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.03), transparent);
+  background: radial-gradient(ellipse at center top, rgba(232,177,67,.08), transparent 60%);
   pointer-events: none;
 }
-.wb-trophy { font-size: 22px; margin-bottom: 2px; }
-.wb-label { font-size: 10px; color: var(--text-dim); letter-spacing: .14em; text-transform: uppercase; font-family: 'Unbounded', sans-serif; }
-.wb-name { font-family: 'Unbounded', sans-serif; font-size: 26px; font-weight: 700; color: var(--text); margin-top: 2px; }
+.wb-trophy { font-size: 36px; margin-bottom: 4px; }
+.wb-label { font-size: 11px; color: var(--text-dim); letter-spacing: .18em; text-transform: uppercase; font-family: 'Unbounded', sans-serif; }
+.wb-name { font-family: 'Unbounded', sans-serif; font-size: 34px; font-weight: 700; color: var(--text); margin-top: 4px; word-break: break-all; text-align: center; }
 
 .wchat-box {
-  flex: 1; min-height: 0;
+  flex: 1; min-height: 200px;
   overflow-y: auto;
-  padding: 10px 16px 12px;
+  padding: 12px 18px 14px;
   display: flex; flex-direction: column; gap: 6px;
   background: linear-gradient(160deg,#101010,#0a0a0a);
 }
-.wchat-box::-webkit-scrollbar { width: 4px; }
+.wchat-box::-webkit-scrollbar { width: 5px; }
 .wchat-box::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 .wchat-empty { font-size: 12px; color: var(--text-dim); text-align: center; padding: 20px; }
 
@@ -297,26 +325,26 @@ footer b { color: var(--text-mid); font-weight: 600; }
 .wm-box {
   background: linear-gradient(160deg, #141414 0%, #0d0d0d 60%, #0a0a0a 100%);
   border: 1px solid var(--border2);
-  border-radius: 8px; padding: 28px 32px;
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
+  border-radius: 10px; padding: 32px 36px;
+  display: flex; flex-direction: column; align-items: center; gap: 22px;
   box-shadow: 0 40px 100px rgba(0,0,0,.8);
-  min-width: 380px;
+  min-width: 540px;
   animation: popIn .28s cubic-bezier(.34,1.56,.64,1);
 }
 @keyframes popIn { from{opacity:0;transform:scale(.85)} to{opacity:1;transform:scale(1)} }
-.wm-title { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: .07em; }
-.wm-count { font-size: 11px; color: var(--text-dim); margin-top: -12px; }
+.wm-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: .07em; }
+.wm-count { font-size: 12px; color: var(--text-dim); margin-top: -14px; }
 
-#wheel-wrap { position: relative; width: 310px; height: 310px; }
+#wheel-wrap { position: relative; width: 480px; height: 480px; }
 .pointer {
-  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
   width: 0; height: 0;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
-  border-top: 24px solid var(--text);
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.8)); z-index: 10;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-top: 30px solid var(--text);
+  filter: drop-shadow(0 3px 10px rgba(0,0,0,.85)); z-index: 10;
 }
-#wheel-canvas { border-radius: 50%; box-shadow: 0 0 0 2px var(--border2), 0 0 50px rgba(255,255,255,.04); }
+#wheel-canvas { border-radius: 50%; box-shadow: 0 0 0 3px var(--border2), 0 0 80px rgba(255,255,255,.05); }
 
 .wm-btns { display: flex; flex-direction: column; gap: 9px; width: 100%; }
 .btn-pick {
@@ -389,23 +417,7 @@ footer b { color: var(--text-mid); font-weight: 600; }
 
 <!-- MIDDLE -->
 <div class="mid">
-  <!-- Winner panel: банер + чат победителя в одном блоке СВЕРХУ -->
-  <div class="panel winner-panel" id="winner-panel">
-    <div class="wb-banner">
-      <div class="wb-trophy">🏆</div>
-      <div class="wb-label">Победитель розыгрыша</div>
-      <div class="wb-name" id="wb-name">—</div>
-    </div>
-    <div class="ph">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      Чат победителя — <span id="wch-name" style="color:var(--text)"></span>
-    </div>
-    <div class="wchat-box" id="wchat-box">
-      <div class="wchat-empty">Сообщения появятся здесь...</div>
-    </div>
-  </div>
-
-  <!-- Chat канала (всегда снизу) -->
+  <!-- Chat канала -->
   <div class="panel main-chat">
     <div class="ph">
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -446,7 +458,7 @@ footer b { color: var(--text-mid); font-weight: 600; }
     </div>
     <div id="wheel-wrap">
       <div class="pointer"></div>
-      <canvas id="wheel-canvas" width="310" height="310"></canvas>
+      <canvas id="wheel-canvas" width="480" height="480"></canvas>
     </div>
     <div class="wm-btns">
       <button class="btn-pick" id="btn-pick">🎯 Выбрать Победителя</button>
@@ -468,26 +480,31 @@ let spinAngle = 0;
 let sevenTVEmotes = {};         // name -> {url, animated}
 
 // ── WHEEL ─────────────────────────────────────────────────────────────
+// 8 цветов без синего/голубого (red, orange, gold, yellow-mustard, lime-green, dark-green, purple, pink)
 const COLORS = [
-  '#1c1c1c','#242424','#2c2c2c','#202020','#282828',
-  '#1a1a1a','#222222','#2a2a2a','#1e1e1e','#262626',
-  '#181818','#202020','#282828','#1c1c1c','#242424',
-  '#161616','#1e1e1e','#262626','#1a1a1a','#222222',
+  '#c14a4a', // красный
+  '#d97a2c', // оранжевый
+  '#d8a23a', // золотой
+  '#b8a020', // горчичный
+  '#5fa83a', // зелёный
+  '#2f7a3a', // тёмно-зелёный
+  '#8a4ab8', // фиолетовый
+  '#c25aa0', // розовый/малиновый
 ];
-const LABEL_COLORS = ['#aaaaaa','#cccccc','#888888','#bbbbbb','#999999'];
 const canvas = document.getElementById('wheel-canvas');
 const ctx = canvas.getContext('2d');
-const CX = 155, CY = 155, R = 150;
+const WHEEL_SIZE = 480;
+const CX = WHEEL_SIZE / 2, CY = WHEEL_SIZE / 2, R = WHEEL_SIZE / 2 - 6;
 
 function drawWheel(angle) {
   angle = angle || 0;
-  ctx.clearRect(0, 0, 310, 310);
+  ctx.clearRect(0, 0, WHEEL_SIZE, WHEEL_SIZE);
   const n = participants.length;
   if (!n) {
     ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2);
     ctx.fillStyle='#111'; ctx.fill();
     ctx.strokeStyle='#222'; ctx.lineWidth=2; ctx.stroke();
-    ctx.fillStyle='#444'; ctx.font='13px Inter';
+    ctx.fillStyle='#444'; ctx.font='16px Inter';
     ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText('Нет участников', CX, CY);
     return;
@@ -497,21 +514,37 @@ function drawWheel(angle) {
     const s = angle + i*slice, e = s + slice;
     ctx.beginPath(); ctx.moveTo(CX,CY); ctx.arc(CX,CY,R,s,e); ctx.closePath();
     ctx.fillStyle = COLORS[i % COLORS.length]; ctx.fill();
-    ctx.strokeStyle = '#080808'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.strokeStyle = 'rgba(0,0,0,.55)'; ctx.lineWidth = 2; ctx.stroke();
+  });
+
+  // Ники — радиально (от края к центру), крупнее, белые с тенью
+  participants.forEach((p,i) => {
+    const s = angle + i*slice;
     const mid = s + slice/2;
-    const lx = CX + Math.cos(mid)*R*.66, ly = CY + Math.sin(mid)*R*.66;
-    ctx.save(); ctx.translate(lx,ly); ctx.rotate(mid+Math.PI/2);
-    ctx.fillStyle = LABEL_COLORS[i % LABEL_COLORS.length];
-    const fs = Math.min(12, Math.max(6, 120/n));
-    ctx.font = `600 ${fs}px Inter`;
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(p.length > 12 ? p.slice(0,11)+'…' : p, 0, 0);
+    ctx.save();
+    ctx.translate(CX, CY);
+    ctx.rotate(mid);
+    // адаптивный размер шрифта
+    const baseSize = Math.min(22, Math.max(11, 260 / n + 6));
+    ctx.font = `700 ${baseSize}px Inter, sans-serif`;
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'rgba(0,0,0,.7)';
+    ctx.shadowBlur = 4;
+    // обрезаем длинные ники под радиус
+    const maxLen = Math.max(8, Math.floor(R * 0.78 / (baseSize * 0.55)));
+    let label = p;
+    if (label.length > maxLen) label = label.slice(0, maxLen - 1) + '…';
+    ctx.fillText(label, R - 14, 0);
     ctx.restore();
   });
-  ctx.beginPath(); ctx.arc(CX,CY,22,0,Math.PI*2);
-  ctx.fillStyle='#080808'; ctx.fill();
-  ctx.strokeStyle='#2a2a2a'; ctx.lineWidth=2; ctx.stroke();
-  ctx.fillStyle='#666'; ctx.font='15px serif';
+
+  // Центр
+  ctx.beginPath(); ctx.arc(CX,CY,32,0,Math.PI*2);
+  ctx.fillStyle='#0a0a0a'; ctx.fill();
+  ctx.strokeStyle='#2e2e2e'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#888'; ctx.font='22px serif';
   ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText('🎡', CX, CY);
 }
@@ -577,11 +610,21 @@ function revealWinner(name) {
   winner = name;
   document.getElementById('wb-name').textContent = name;
   document.getElementById('wch-name').textContent = name;
-  document.getElementById('winner-panel').classList.add('show');
+  document.getElementById('winner-overlay').classList.add('show');
   document.getElementById('wchat-box').innerHTML =
     '<div class="wchat-empty">Сообщения появятся здесь...</div>';
   renderParticipants();
 }
+
+// Закрытие overlay победителя
+document.getElementById('win-close').addEventListener('click', () => {
+  document.getElementById('winner-overlay').classList.remove('show');
+});
+document.getElementById('winner-overlay').addEventListener('click', (e) => {
+  if (e.target.id === 'winner-overlay') {
+    document.getElementById('winner-overlay').classList.remove('show');
+  }
+});
 
 // ── IRC / TWITCH ──────────────────────────────────────────────────────
 let channel = '', keyword = '';
@@ -608,7 +651,7 @@ document.getElementById('btn-clear').addEventListener('click', () => {
   blacklist = new Set();
   renderParticipants();
   document.getElementById('s-part').textContent = '0';
-  document.getElementById('winner-panel').classList.remove('show');
+  document.getElementById('winner-overlay').classList.remove('show');
   document.getElementById('btn-open-wheel').disabled = true;
   drawWheel(spinAngle);
 });
@@ -618,7 +661,7 @@ function fullReset() {
   blacklist = new Set();
   sevenTVEmotes = {};
   document.getElementById('s-part').textContent = '0';
-  document.getElementById('winner-panel').classList.remove('show');
+  document.getElementById('winner-overlay').classList.remove('show');
   document.getElementById('btn-open-wheel').disabled = true;
   drawWheel(spinAngle);
   const chatBox = document.getElementById('chat-box');
@@ -811,7 +854,7 @@ function removeParticipant(nick) {
   // если удалили текущего победителя — снимаем плашку
   if (winner && winner.toLowerCase() === lower) {
     winner = null; winnerName = null;
-    document.getElementById('winner-panel').classList.remove('show');
+    document.getElementById('winner-overlay').classList.remove('show');
   }
   document.getElementById('s-part').textContent = participants.length;
   document.getElementById('btn-open-wheel').disabled = participants.length === 0;
@@ -902,5 +945,24 @@ function addEmoteSet(arr) {
   }
 }
 </script>
+<!-- WINNER OVERLAY (поверх всего сайта) -->
+<div id="winner-overlay">
+  <div class="win-card">
+    <button class="win-close" id="win-close" title="Закрыть">✕</button>
+    <div class="wb-banner">
+      <div class="wb-trophy">🏆</div>
+      <div class="wb-label">Победитель розыгрыша</div>
+      <div class="wb-name" id="wb-name">—</div>
+    </div>
+    <div class="ph">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Чат победителя — <span id="wch-name" style="color:var(--text)"></span>
+    </div>
+    <div class="wchat-box" id="wchat-box">
+      <div class="wchat-empty">Сообщения появятся здесь...</div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
