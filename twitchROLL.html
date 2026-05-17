@@ -449,6 +449,25 @@ footer b { color: var(--text-mid); font-weight: 600; }
 <!-- FOOTER -->
 <footer>© Все права защищены 2026 &nbsp;·&nbsp; Создано <b>&nbsp;horiifn</b></footer>
 
+<!-- WINNER OVERLAY (поверх всего сайта) -->
+<div id="winner-overlay">
+  <div class="win-card">
+    <button class="win-close" id="win-close" title="Закрыть">✕</button>
+    <div class="wb-banner">
+      <div class="wb-trophy">🏆</div>
+      <div class="wb-label">Победитель розыгрыша</div>
+      <div class="wb-name" id="wb-name">—</div>
+    </div>
+    <div class="ph">
+      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Чат победителя — <span id="wch-name" style="color:var(--text)"></span>
+    </div>
+    <div class="wchat-box" id="wchat-box">
+      <div class="wchat-empty">Сообщения появятся здесь...</div>
+    </div>
+  </div>
+</div>
+
 <!-- WHEEL MODAL -->
 <div id="wheel-modal">
   <div class="wm-box">
@@ -945,24 +964,6 @@ function addEmoteSet(arr) {
   }
 }
 </script>
-<!-- WINNER OVERLAY (поверх всего сайта) -->
-<div id="winner-overlay">
-  <div class="win-card">
-    <button class="win-close" id="win-close" title="Закрыть">✕</button>
-    <div class="wb-banner">
-      <div class="wb-trophy">🏆</div>
-      <div class="wb-label">Победитель розыгрыша</div>
-      <div class="wb-name" id="wb-name">—</div>
-    </div>
-    <div class="ph">
-      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-      Чат победителя — <span id="wch-name" style="color:var(--text)"></span>
-    </div>
-    <div class="wchat-box" id="wchat-box">
-      <div class="wchat-empty">Сообщения появятся здесь...</div>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
