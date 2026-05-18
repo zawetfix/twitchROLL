@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Twitch Розыгрыш — horiifn</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='4' y='4' width='56' height='56' rx='14' fill='%23ff8c00'/><text x='32' y='44' font-size='32' text-anchor='middle' fill='white'>🎁</text></svg>">
+<title>Twitch Розыгрыш</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect x='4' y='4' width='56' height='56' rx='14' fill='%23ff8c00'/><path d='M20 44 L20 16 L44 16 L44 36 L36 44 Z' fill='white'/><rect x='26' y='22' width='4' height='10' fill='%23ff8c00'/><rect x='34' y='22' width='4' height='10' fill='%23ff8c00'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -67,13 +67,8 @@ header {
 }
 .hdot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.15); }
 .hstatus { font-size: 13px; color: var(--text-dim); font-weight: 500; }
-.hby {
-  margin-left: auto;
-  font-size: 12px; color: var(--text-dim); letter-spacing: .04em;
-  font-family: 'Unbounded', sans-serif; font-weight: 400;
-}
-.hby b { color: var(--orange); font-weight: 700; }
 .live-badge {
+  margin-left: auto;
   display: flex; align-items: center; gap: 6px;
   font-size: 11px; font-weight: 700; letter-spacing: .12em;
   color: var(--red); opacity: 0; transition: opacity .3s;
@@ -126,17 +121,24 @@ input[type=text] {
   padding: 12px 14px;
   color: var(--text); font-size: 14px; font-weight: 500;
   font-family: 'Inter', sans-serif;
-  outline: none; transition: border-color .2s;
+  outline: none; transition: border-color .2s, opacity .2s;
 }
 input[type=text]:focus { border-color: rgba(255,140,0,0.4); }
 input[type=text]::placeholder { color: var(--text-dim); }
+input[type=text]:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: rgba(255,255,255,0.05);
+}
 
 .btn {
   width: 100%; padding: 14px; border: none; border-radius: var(--radius-sm);
   cursor: pointer; font-family: 'Unbounded', sans-serif;
   font-size: 11px; font-weight: 700; letter-spacing: .06em;
   transition: all .2s; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
+.btn svg { flex-shrink: 0; }
 .btn-primary {
   background: linear-gradient(135deg, var(--orange), var(--orange2));
   color: #ffffff;
@@ -174,7 +176,7 @@ input[type=text]::placeholder { color: var(--text-dim); }
   width: 44px; height: 44px; border-radius: 12px;
   background: linear-gradient(135deg, var(--orange), var(--orange2));
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px; flex-shrink: 0;
+  flex-shrink: 0;
 }
 .stat-val {
   font-family: 'Unbounded', sans-serif;
@@ -195,6 +197,56 @@ input[type=text]::placeholder { color: var(--text-dim); }
 .err-box.show { display: block; }
 .divider { height: 1px; background: rgba(255,255,255,0.06); }
 
+/* ── TOGGLE SWITCH ── */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding: 10px 14px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm);
+}
+.toggle-label {
+  font-size: 12px; color: var(--text-mid); font-weight: 500; line-height: 1.4;
+  text-transform: none; letter-spacing: 0; margin-bottom: 0; display: inline;
+}
+.toggle-switch {
+  position: relative; width: 38px; height: 22px; flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 11px; transition: .2s;
+}
+.toggle-slider:before {
+  content: ''; position: absolute;
+  width: 16px; height: 16px; left: 2px; top: 2px;
+  background: var(--text-dim); border-radius: 50%; transition: .2s;
+}
+.toggle-switch input:checked + .toggle-slider { background: rgba(255,140,0,0.3); border-color: rgba(255,140,0,0.6); }
+.toggle-switch input:checked + .toggle-slider:before { transform: translateX(16px); background: var(--orange); }
+
+/* ── MODE SELECT ── */
+.mode-row {
+  display: flex; gap: 6px;
+}
+.mode-btn {
+  flex: 1; padding: 8px 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.3);
+  color: var(--text-dim);
+  cursor: pointer; font-family: 'Inter', sans-serif;
+  font-size: 11px; font-weight: 600; letter-spacing: .02em;
+  text-align: center; transition: all .15s;
+}
+.mode-btn.active {
+  border-color: rgba(255,140,0,0.5);
+  background: rgba(255,140,0,0.12);
+  color: var(--orange);
+}
+
 /* ── MIDDLE ── */
 .mid { display: flex; flex-direction: column; gap: 10px; overflow: hidden; min-width: 0; }
 
@@ -202,17 +254,29 @@ input[type=text]::placeholder { color: var(--text-dim); }
 .main-chat { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
 .chat-box {
   flex: 1; overflow-y: auto; padding: 12px 16px;
-  display: flex; flex-direction: column; gap: 5px;
+  display: flex; flex-direction: column; gap: 3px;
 }
-.chat-msg { font-size: 13px; line-height: 1.5; animation: fadeUp .18s ease; word-wrap: break-word; }
+.chat-msg {
+  font-size: 13px; line-height: 1.5; animation: fadeUp .18s ease;
+  word-wrap: break-word;
+  padding: 2px 4px; border-radius: 3px;
+  background: transparent !important;
+}
 @keyframes fadeUp { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
-.chat-msg .nick { font-weight: 600; margin-right: 5px; }
+.chat-msg .nick { font-weight: 600; margin-right: 4px; }
 .chat-msg .txt { color: rgba(255,255,255,0.85); }
 .chat-msg.kw {
-  background: rgba(255,140,0,0.06);
+  background: rgba(255,140,0,0.06) !important;
   border-left: 2px solid rgba(255,140,0,0.5);
   padding: 3px 8px; border-radius: 4px;
 }
+/* Twitch badges */
+.badge {
+  display: inline-block; vertical-align: middle;
+  width: 18px; height: 18px; margin: -2px 3px -2px 0;
+  border-radius: 3px;
+}
+.badge svg { width: 18px; height: 18px; }
 .emote {
   display: inline-block; vertical-align: middle;
   height: 26px; margin: -3px 1px;
@@ -252,13 +316,13 @@ input[type=text]::placeholder { color: var(--text-dim); }
   min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .pi.winner .pn { color: var(--orange); font-weight: 600; }
-.pi .crown { font-size: 14px; }
+.pi .crown { flex-shrink: 0; display: flex; align-items: center; }
 .pi-x {
   width: 22px; height: 22px; border-radius: 50%;
   background: transparent; border: 1px solid rgba(255,255,255,0.1);
   color: var(--text-dim);
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 12px; line-height: 1; flex-shrink: 0;
+  cursor: pointer; font-size: 11px; line-height: 1; flex-shrink: 0;
   transition: all .15s; font-family: 'Inter', sans-serif;
 }
 .pi-x:hover { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
@@ -327,7 +391,7 @@ footer b { color: var(--orange); font-weight: 600; }
   background: radial-gradient(ellipse at center top, rgba(255,140,0,.1), transparent 60%);
   pointer-events: none;
 }
-.wb-trophy { font-size: 40px; margin-bottom: 4px; }
+.wb-trophy { font-size: 40px; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; }
 .wb-label {
   font-size: 11px; color: var(--text-dim); letter-spacing: .18em;
   text-transform: uppercase; font-family: 'Unbounded', sans-serif; font-weight: 600;
@@ -367,6 +431,7 @@ footer b { color: var(--orange); font-weight: 600; }
   font-family: 'Unbounded', sans-serif;
   font-size: 13px; font-weight: 700; color: var(--text);
   letter-spacing: .06em;
+  display: flex; align-items: center; gap: 8px;
 }
 .cm-count {
   font-size: 12px; color: var(--text-dim); margin-top: -14px;
@@ -382,7 +447,6 @@ footer b { color: var(--orange); font-weight: 600; }
   background: rgba(0,0,0,0.4);
 }
 
-/* The orange center pointer */
 .case-pointer {
   position: absolute;
   left: 50%; top: 0; bottom: 0;
@@ -410,7 +474,6 @@ footer b { color: var(--orange); font-weight: 600; }
   border-bottom: 12px solid var(--orange);
 }
 
-/* Fade overlays on sides */
 .case-fade-left,
 .case-fade-right {
   position: absolute; top: 0; bottom: 0; width: 80px; z-index: 5; pointer-events: none;
@@ -425,7 +488,7 @@ footer b { color: var(--orange); font-weight: 600; }
 .case-track {
   display: flex;
   gap: 8px;
-  padding: 0 calc(50% - 52px); /* center the middle cell */
+  padding: 0 calc(50% - 52px);
   will-change: transform;
   transition: none;
 }
@@ -468,6 +531,7 @@ footer b { color: var(--orange); font-weight: 600; }
   background: linear-gradient(135deg, var(--orange), var(--orange2));
   color: #fff; transition: all .15s;
   box-shadow: 0 4px 16px rgba(255,140,0,0.25);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .btn-pick:hover { filter: brightness(1.08); transform: translateY(-1px); }
 .btn-pick:disabled { opacity: .3; cursor: not-allowed; transform: none; filter: none; box-shadow: none; }
@@ -493,7 +557,6 @@ footer b { color: var(--orange); font-weight: 600; }
   </div>
   <div class="hdot"></div>
   <span class="hstatus" id="hstatus">Не подключено</span>
-  <div class="hby">by <b>horiifn</b></div>
   <div class="live-badge" id="live-badge">LIVE</div>
 </header>
 
@@ -508,20 +571,47 @@ footer b { color: var(--orange); font-weight: 600; }
   <div class="ctrl">
     <div>
       <label>Никнейм стримера</label>
-      <input type="text" id="inp-ch" placeholder="horiifn" value="horiifn">
-    </div>
-    <div>
-      <label>Ключевое слово</label>
-      <input type="text" id="inp-kw" placeholder="розыгрыш" value="розыгрыш">
+      <input type="text" id="inp-ch" placeholder="channel" value="">
     </div>
 
-    <button class="btn btn-primary" id="btn-connect">⚡ Начать Отбор</button>
-    <button class="btn btn-danger" id="btn-disconnect" style="display:none">✕ Отключиться</button>
+    <!-- Mode selector -->
+    <div>
+      <label>Режим участия</label>
+      <div class="mode-row">
+        <button class="mode-btn active" id="mode-kw" onclick="setMode('keyword')">Ключевое слово</button>
+        <button class="mode-btn" id="mode-any" onclick="setMode('any')">Любое слово</button>
+      </div>
+    </div>
+
+    <div id="kw-field">
+      <label>Ключевое слово</label>
+      <input type="text" id="inp-kw" placeholder="розыгрыш" value="">
+    </div>
+
+    <button class="btn btn-primary" id="btn-connect">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor" stroke="none"/></svg>
+      Начать Отбор
+    </button>
+    <button class="btn btn-danger" id="btn-disconnect" style="display:none">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Отключиться
+    </button>
 
     <div class="err-box" id="err-box"></div>
 
+    <!-- Remove winner toggle -->
+    <div class="toggle-row">
+      <span class="toggle-label">Удалять победителя из розыгрыша</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="toggle-remove-winner">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+
     <div class="stat-block">
-      <div class="stat-icon">👥</div>
+      <div class="stat-icon">
+        <svg width="22" height="22" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
       <div class="stat-info">
         <div class="stat-val" id="s-part">0</div>
         <div class="stat-lbl">Участников в розыгрыше</div>
@@ -530,8 +620,14 @@ footer b { color: var(--orange); font-weight: 600; }
 
     <div class="divider"></div>
 
-    <button class="btn btn-case" id="btn-open-case" disabled>🎁 Открыть Кейс</button>
-    <button class="btn btn-muted" id="btn-clear">↺ Сбросить участников</button>
+    <button class="btn btn-case" id="btn-open-case" disabled>
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Выбрать победителя
+    </button>
+    <button class="btn btn-muted" id="btn-clear">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+      Сбросить участников
+    </button>
   </div>
 </div>
 
@@ -570,14 +666,16 @@ footer b { color: var(--orange); font-weight: 600; }
 </div>
 
 <!-- FOOTER -->
-<footer>© Все права защищены 2026 &nbsp;·&nbsp; Создано <b>&nbsp;horiifn</b></footer>
+<footer>© Все права защищены 2026</footer>
 
 <!-- WINNER OVERLAY -->
 <div id="winner-overlay">
   <div class="win-card">
     <button class="win-close" id="win-close" title="Закрыть">✕</button>
     <div class="wb-banner">
-      <div class="wb-trophy">🏆</div>
+      <div class="wb-trophy">
+        <svg width="44" height="44" fill="none" stroke="var(--orange)" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      </div>
       <div class="wb-label">Победитель розыгрыша</div>
       <div class="wb-name" id="wb-name">—</div>
     </div>
@@ -597,7 +695,10 @@ footer b { color: var(--orange); font-weight: 600; }
 <div id="case-modal">
   <div class="cm-box">
     <div style="text-align:center;width:100%">
-      <div class="cm-title">🎁 Открытие Кейса</div>
+      <div class="cm-title">
+        <svg width="18" height="18" fill="none" stroke="var(--orange)" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Выбор Победителя
+      </div>
       <div class="cm-count" id="cm-count" style="margin-top:6px"></div>
     </div>
 
@@ -611,7 +712,10 @@ footer b { color: var(--orange); font-weight: 600; }
     </div>
 
     <div class="cm-btns">
-      <button class="btn-pick" id="btn-pick">🎯 Выбрать Победителя</button>
+      <button class="btn-pick" id="btn-pick">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Выбрать Победителя
+      </button>
       <button class="btn-close-cm" id="btn-close-cm">Закрыть</button>
     </div>
   </div>
@@ -625,6 +729,7 @@ let winner = null;
 let winnerName = null;
 let caseSpinning = false;
 let sevenTVEmotes = {};
+let participationMode = 'keyword'; // 'keyword' or 'any'
 
 // ── COLORS ─────────────────────────────────────────────
 const COLORS = [
@@ -640,6 +745,14 @@ function nickColor(nick) {
   return COLORS[idx];
 }
 
+// ── MODE SWITCH ─────────────────────────────────────────
+function setMode(mode) {
+  participationMode = mode;
+  document.getElementById('mode-kw').classList.toggle('active', mode === 'keyword');
+  document.getElementById('mode-any').classList.toggle('active', mode === 'any');
+  document.getElementById('kw-field').style.display = mode === 'keyword' ? 'block' : 'none';
+}
+
 // ── CASE STRIP ─────────────────────────────────────────
 function buildTrack(winnerIdx) {
   const track = document.getElementById('case-track');
@@ -647,11 +760,10 @@ function buildTrack(winnerIdx) {
   track.style.transition = 'none';
   track.style.transform = 'translateX(0)';
 
-  const cellW = 104; // 96px + 8px gap
+  const cellW = 104;
   const totalCells = 60;
   const centerPos = Math.floor(totalCells / 2);
 
-  // Fill with random participants, put winner at center
   const cells = [];
   for (let i = 0; i < totalCells; i++) {
     if (i === centerPos) {
@@ -665,10 +777,8 @@ function buildTrack(winnerIdx) {
   cells.forEach((nick, i) => {
     const cell = document.createElement('div');
     cell.className = 'case-cell';
-
     const color = nickColor(nick);
     const letter = nick[0].toUpperCase();
-
     cell.innerHTML = `
       <div class="av" style="background:${color}22;border-color:${color}66;color:${color}">${esc(letter)}</div>
       <div class="nick-lbl">${esc(nick)}</div>
@@ -682,7 +792,7 @@ function buildTrack(winnerIdx) {
 document.getElementById('btn-open-case').addEventListener('click', () => {
   const n = participants.length;
   document.getElementById('cm-count').textContent = `${n} участник${plu(n)}`;
-  buildTrack(0); // placeholder before spin
+  buildTrack(0);
   document.getElementById('case-modal').classList.add('show');
 });
 
@@ -703,18 +813,11 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   const winIdx = Math.floor(Math.random() * participants.length);
   const { track, centerPos, cellW } = buildTrack(winIdx);
 
-  // Calculate offset: move so that cell at centerPos is under the pointer
-  // The track starts with padding = calc(50% - 52px), so cell at index centerPos
-  // should land at x=0 relative to the center.
-  // We need to shift left by centerPos * cellW minus a small random offset
-  const containerW = track.closest('.case-wrap').offsetWidth;
-  const randomOffset = (Math.random() - 0.5) * 40; // slight randomness within cell
+  const randomOffset = (Math.random() - 0.5) * 40;
   const targetX = -(centerPos * cellW) + randomOffset;
 
-  // Force reflow
   void track.offsetWidth;
 
-  // Start far right, then ease to target
   const startX = targetX + 2200 + Math.random() * 400;
   track.style.transform = `translateX(${startX}px)`;
   track.style.transition = 'none';
@@ -729,15 +832,26 @@ document.getElementById('btn-pick').addEventListener('click', () => {
 
   setTimeout(() => {
     caseSpinning = false;
-    winnerName = participants[winIdx];
+    const pickedName = participants[winIdx];
+    winnerName = pickedName;
 
-    // Highlight the winner cell
     const cells = track.querySelectorAll('.case-cell');
     cells.forEach((c, i) => c.classList.toggle('highlight', i === centerPos));
 
+    // Remove winner if toggle is on
+    const removeWinner = document.getElementById('toggle-remove-winner').checked;
+    if (removeWinner) {
+      const lowerPicked = pickedName.toLowerCase();
+      blacklist.add(lowerPicked);
+      participants = participants.filter(p => p.toLowerCase() !== lowerPicked);
+      document.getElementById('s-part').textContent = participants.length;
+      document.getElementById('btn-open-case').disabled = participants.length === 0;
+      renderParticipants();
+    }
+
     setTimeout(() => {
       document.getElementById('case-modal').classList.remove('show');
-      revealWinner(winnerName);
+      revealWinner(pickedName);
       document.getElementById('btn-pick').disabled = false;
       document.getElementById('btn-close-cm').disabled = false;
     }, 900);
@@ -779,7 +893,7 @@ function renderParticipants() {
     el.innerHTML = `
       <div class="av" style="background:${c}22;border-color:${c}55;color:${c}">${esc(p[0].toUpperCase())}</div>
       <span class="pn">${esc(p)}</span>
-      ${isW ? '<span class="crown">👑</span>' : ''}
+      ${isW ? `<span class="crown"><svg width="14" height="14" viewBox="0 0 24 24" fill="var(--orange)" stroke="none"><path d="M2 20h20M5 20 3 8l5 4 4-7 4 7 5-4-2 12H5z"/></svg></span>` : ''}
       <button class="pi-x" data-nick="${escAttr(p)}" title="Удалить">✕</button>
     `;
     list.appendChild(el);
@@ -816,7 +930,10 @@ document.getElementById('btn-connect').addEventListener('click', () => {
   const ch = document.getElementById('inp-ch').value.trim().toLowerCase();
   const kw = document.getElementById('inp-kw').value.trim().toLowerCase();
   const err = document.getElementById('err-box');
-  if (!ch || !kw) { err.textContent='Введите никнейм стримера и ключевое слово'; err.classList.add('show'); return; }
+  if (!ch) { err.textContent='Введите никнейм стримера'; err.classList.add('show'); return; }
+  if (participationMode === 'keyword' && !kw) {
+    err.textContent='Введите ключевое слово'; err.classList.add('show'); return;
+  }
   err.classList.remove('show');
   channel = ch; keyword = kw;
   connectIRC(ch, kw);
@@ -850,6 +967,26 @@ function fullReset() {
     Подключитесь к каналу чтобы увидеть чат
   </div>`;
   renderParticipants();
+  // Re-enable inputs after disconnect
+  setInputsDisabled(false);
+}
+
+function setInputsDisabled(disabled) {
+  document.getElementById('inp-ch').disabled = disabled;
+  document.getElementById('inp-kw').disabled = disabled;
+  document.getElementById('mode-kw').disabled = disabled;
+  document.getElementById('mode-any').disabled = disabled;
+  if (disabled) {
+    document.getElementById('mode-kw').style.opacity = '0.4';
+    document.getElementById('mode-kw').style.cursor = 'not-allowed';
+    document.getElementById('mode-any').style.opacity = '0.4';
+    document.getElementById('mode-any').style.cursor = 'not-allowed';
+  } else {
+    document.getElementById('mode-kw').style.opacity = '';
+    document.getElementById('mode-kw').style.cursor = '';
+    document.getElementById('mode-any').style.opacity = '';
+    document.getElementById('mode-any').style.cursor = '';
+  }
 }
 
 function connectIRC(ch, kw) {
@@ -868,7 +1005,10 @@ function connectIRC(ch, kw) {
       if (!raw) continue;
       if (raw.startsWith('PING')) { ws.send('PONG :tmi.twitch.tv'); continue; }
       if (raw.includes('PRIVMSG')) parseMsg(raw, kw);
-      if (raw.includes('366') || raw.includes('JOIN #')) setHStatus('Подключено к #' + ch, true);
+      if (raw.includes('366') || raw.includes('JOIN #')) {
+        setHStatus('Подключено к #' + ch, true);
+        setInputsDisabled(true);
+      }
     }
   };
   ws.onerror = () => { showErr('Ошибка подключения к Twitch'); setDisconnected(); };
@@ -880,13 +1020,14 @@ function setHStatus(txt, live) {
   document.getElementById('live-badge').classList.toggle('on', live);
   if (live) {
     document.getElementById('btn-connect').style.display = 'none';
-    document.getElementById('btn-disconnect').style.display = 'block';
+    document.getElementById('btn-disconnect').style.display = 'flex';
   }
 }
 function setDisconnected() {
   setHStatus('Не подключено', false);
-  document.getElementById('btn-connect').style.display = 'block';
+  document.getElementById('btn-connect').style.display = 'flex';
   document.getElementById('btn-disconnect').style.display = 'none';
+  setInputsDisabled(false);
   ws = null;
 }
 function showErr(msg) {
@@ -924,6 +1065,31 @@ function parseTwitchEmotes(emotesStr) {
     }
   }
   return out.sort((a, b) => a.start - b.start);
+}
+
+// ── BADGE RENDERING ─────────────────────────────────────
+const BADGE_SVGS = {
+  broadcaster: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#9146ff"/><path d="M6 14V6l4 3 4-3v8" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><rect x="5" y="14" width="10" height="1.5" rx=".75" fill="white"/></svg>`,
+  moderator: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#00ad03"/><path d="M10 4l1.8 3.6L16 8.4l-3 2.9.7 4.1L10 13.4 6.3 15.4 7 11.3 4 8.4l4.2-.8L10 4z" fill="white"/></svg>`,
+  vip: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#e005b9"/><path d="M5 7l5 8 5-8H5z" fill="white"/><rect x="5" y="6" width="10" height="1.5" rx=".75" fill="white"/></svg>`,
+  subscriber: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#9146ff"/><path d="M10 5l1.5 3 3.5.5-2.5 2.5.5 3.5L10 13l-3 1.5.5-3.5L5 8.5 8.5 8 10 5z" fill="white"/></svg>`,
+  'sub-gifter': `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#9146ff"/><rect x="4" y="9" width="12" height="7" rx="1" fill="white"/><rect x="4" y="7" width="12" height="3" rx="1" fill="white" opacity=".7"/><rect x="9" y="5" width="2" height="10" rx="1" fill="#9146ff"/><path d="M8 5.5C8 4.7 8.7 4 9.5 4S11 4.7 11 5.5" stroke="#9146ff" stroke-width="1.5"/><path d="M12 5.5C12 4.7 11.3 4 10.5 4S9 4.7 9 5.5" stroke="#9146ff" stroke-width="1.5"/></svg>`,
+  staff: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#9146ff"/><path d="M4 16L10 4l6 12H4z" fill="white"/></svg>`,
+  turbo: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#9146ff"/><path d="M11 4L5 11h5l-1 5 6-7h-5l1-5z" fill="white"/></svg>`,
+  premium: `<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="20" height="20" rx="4" fill="#009cdc"/><path d="M10 5l1.5 3 3.5.5-2.5 2.5.5 3.5L10 13l-3 1.5.5-3.5L5 8.5 8.5 8 10 5z" fill="white"/></svg>`,
+};
+
+function renderBadges(badgesStr) {
+  if (!badgesStr) return '';
+  let html = '';
+  for (const b of badgesStr.split(',')) {
+    const [name] = b.split('/');
+    const svg = BADGE_SVGS[name];
+    if (svg) {
+      html += `<span class="badge" title="${esc(name)}">${svg}</span>`;
+    }
+  }
+  return html;
 }
 
 function renderMessageHTML(text, twitchEmotes) {
@@ -973,15 +1139,36 @@ function parseMsg(raw, kw) {
   if (!mm) return;
   const text = mm[1].trim();
   const twitchEmotes = parseTwitchEmotes(tags['emotes'] || '');
-  const isKw = text.toLowerCase().includes(kw);
+  const badges = tags['badges'] || '';
+
+  // Determine if message qualifies
+  let qualifies = false;
+  if (participationMode === 'keyword') {
+    // Must contain keyword as a whole standalone word (case-insensitive)
+    // Match keyword as exact word (surrounded by word boundaries or spaces/start/end)
+    const kwLower = kw.toLowerCase();
+    const textLower = text.toLowerCase();
+    // Split by whitespace and check exact match
+    const words = textLower.split(/\s+/);
+    qualifies = words.some(w => w === kwLower);
+  } else {
+    // Any message qualifies
+    qualifies = true;
+  }
+
   const lowerNick = nick.toLowerCase();
-  addChatMsg(nick, text, twitchEmotes, isKw, color);
+  addChatMsg(nick, text, twitchEmotes, qualifies, color, badges);
 
   if (winnerName && lowerNick === winnerName.toLowerCase()) {
     addWinnerMsg(nick, text, twitchEmotes, color);
   }
 
-  if (isKw && !blacklist.has(lowerNick) && !participants.some(p => p.toLowerCase() === lowerNick)) {
+  // Check remove-winner toggle: if winner was removed, they are in blacklist
+  const removeWinner = document.getElementById('toggle-remove-winner').checked;
+  const alreadyIn = participants.some(p => p.toLowerCase() === lowerNick);
+  const inBlacklist = blacklist.has(lowerNick);
+
+  if (qualifies && !inBlacklist && !alreadyIn) {
     participants.push(nick);
     document.getElementById('s-part').textContent = participants.length;
     renderParticipants();
@@ -989,13 +1176,14 @@ function parseMsg(raw, kw) {
   }
 }
 
-function addChatMsg(nick, text, twitchEmotes, isKw, color) {
+function addChatMsg(nick, text, twitchEmotes, isKw, color, badges) {
   const empty = document.getElementById('chat-empty');
   if (empty) empty.remove();
   const el = document.createElement('div');
   el.className = 'chat-msg' + (isKw ? ' kw' : '');
   const c = color || nickColor(nick);
-  el.innerHTML = `<span class="nick" style="color:${c}">${esc(nick)}</span><span class="txt">${renderMessageHTML(text, twitchEmotes)}</span>`;
+  const badgeHTML = renderBadges(badges);
+  el.innerHTML = `${badgeHTML}<span class="nick" style="color:${c}">${esc(nick)}</span><span class="txt">${renderMessageHTML(text, twitchEmotes)}</span>`;
   const box = document.getElementById('chat-box');
   box.appendChild(el);
   while (box.children.length > 200) box.removeChild(box.firstChild);
