@@ -971,7 +971,7 @@ function plu(n) {
 // ── IRC ─────────────────────────────────────────────────
 let channel = '', keyword = '';
 
-document.getElementById('btn-connect').addEventListener('click', async () => {
+document.getElementById('btn-connect').addEventListener('click', () => {
   const ch = document.getElementById('inp-ch').value.trim().toLowerCase();
   const kw = document.getElementById('inp-kw').value.trim().toLowerCase();
   const err = document.getElementById('err-box');
@@ -981,24 +981,6 @@ document.getElementById('btn-connect').addEventListener('click', async () => {
   }
   err.classList.remove('show');
   channel = ch; keyword = kw;
-  
-  // Загружаем значки
-  console.log('🔄 Загрузка значков...');
-  await loadGlobalBadges();
-  
-  // Получаем ID канала и загружаем значки канала
-  try {
-    const response = await fetch('https://decapi.me/twitch/id/' + encodeURIComponent(ch));
-    if (response.ok) {
-      const channelId = (await response.text()).trim();
-      if (/^\d+$/.test(channelId)) {
-        console.log('📺 ID канала:', channelId);
-        await loadChannelBadges(channelId);
-      }
-    }
-  } catch (error) {
-    console.error('❌ Ошибка получения ID канала:', error);
-  }
   
   connectIRC(ch, kw);
   load7TVEmotes(ch);
@@ -1128,41 +1110,48 @@ function parseTwitchEmotes(emotesStr) {
 }
 
 // ── BADGE RENDERING ─────────────────────────────────────
-let globalBadges = {};
-let channelBadges = {};
+// Статические URL основных значков Twitch (работают везде, без CORS)
+const BADGE_URLS = {
+  'broadcaster': 'https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/2',
+  'moderator': 'https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/2',
+  'vip': 'https://static-cdn.jtvnw.net/badges/v1/b817aba4-fad8-49e2-b88a-7cc744dfa6ec/2',
+  'subscriber': 'https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/2',
+  'premium': 'https://static-cdn.jtvnw.net/badges/v1/bbbe0db0-a598-423e-86d0-f9fb98ca1933/2',
+  'turbo': 'https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/2',
+  'partner': 'https://static-cdn.jtvnw.net/badges/v1/d12a2e27-16f6-41d0-ab77-b780518f00a3/2',
+  'staff': 'https://static-cdn.jtvnw.net/badges/v1/d97c37bd-a6f5-4c38-8f57-4e4bef88af34/2',
+  'admin': 'https://static-cdn.jtvnw.net/badges/v1/9ef7e029-4cdf-4d4d-a0d5-e2b3fb2583fe/2',
+  'global_mod': 'https://static-cdn.jtvnw.net/badges/v1/9384c43e-4ce7-4e94-b2a1-b93656896eba/2',
+  'founder': 'https://static-cdn.jtvnw.net/badges/v1/511b78a9-ab37-472f-9569-457753bbe7d3/2',
+  'bits': 'https://static-cdn.jtvnw.net/badges/v1/73b5c3fb-24f9-4a82-a852-2f475b59411c/2',
+  'sub-gifter': 'https://static-cdn.jtvnw.net/badges/v1/a5ef6c17-2e5b-4d8f-9b80-2779fd722414/2',
+  'sub-gift-leader': 'https://static-cdn.jtvnw.net/badges/v1/21656088-7da2-4467-acd2-55220e1f45ad/2',
+  'hype-train': 'https://static-cdn.jtvnw.net/badges/v1/fae4086c-3190-44d4-83c8-8ef0cbe1a515/2',
+  'moments': 'https://static-cdn.jtvnw.net/badges/v1/bf370830-d79a-497b-81c6-a365b2b60dda/2',
+  'clip-champ': 'https://static-cdn.jtvnw.net/badges/v1/f38976e0-ffc9-11e7-86d6-7f98b26a9d79/2',
+  'artist-badge': 'https://static-cdn.jtvnw.net/badges/v1/4300a897-03dc-4e83-8c0e-c332fee7057f/2',
+};
 
-// Загрузка глобальных значков Twitch
-async function loadGlobalBadges() {
-  try {
-    const response = await fetch('https://badges.twitch.tv/v1/badges/global/display');
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.badge_sets) {
-        globalBadges = data.badge_sets;
-        console.log('✅ Глобальные значки загружены:', Object.keys(globalBadges).length);
-      }
-    }
-  } catch (error) {
-    console.error('❌ Ошибка загрузки глобальных значков:', error);
-  }
-}
-
-// Загрузка значков канала
-async function loadChannelBadges(channelId) {
-  if (!channelId) return;
-  try {
-    const response = await fetch(`https://badges.twitch.tv/v1/badges/channels/${channelId}/display`);
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.badge_sets) {
-        channelBadges = data.badge_sets;
-        console.log('✅ Значки канала загружены:', Object.keys(channelBadges).length);
-      }
-    }
-  } catch (error) {
-    console.error('❌ Ошибка загрузки значков канала:', error);
-  }
-}
+const BADGE_TITLES = {
+  'broadcaster': 'Broadcaster',
+  'moderator': 'Moderator',
+  'vip': 'VIP',
+  'subscriber': 'Subscriber',
+  'premium': 'Prime Gaming',
+  'turbo': 'Turbo',
+  'partner': 'Verified',
+  'staff': 'Staff',
+  'admin': 'Admin',
+  'global_mod': 'Global Moderator',
+  'founder': 'Founder',
+  'bits': 'Bits',
+  'sub-gifter': 'Sub Gifter',
+  'sub-gift-leader': 'Gift Leader',
+  'hype-train': 'Hype Train',
+  'moments': 'Moments',
+  'clip-champ': 'Clip Champ',
+  'artist-badge': 'Artist',
+};
 
 function renderBadges(badgesStr) {
   if (!badgesStr) return '';
@@ -1173,22 +1162,19 @@ function renderBadges(badgesStr) {
   
   for (const badgeStr of badges) {
     const [badgeId, version] = badgeStr.split('/');
-    if (!badgeId || !version) continue;
+    if (!badgeId) continue;
     
-    // Ищем значок сначала в значках канала, потом в глобальных
-    let badgeData = null;
-    let badgeSet = channelBadges[badgeId] || globalBadges[badgeId];
+    // Проверяем известные значки
+    let badgeUrl = BADGE_URLS[badgeId];
+    let title = BADGE_TITLES[badgeId] || badgeId;
     
-    if (badgeSet && badgeSet.versions && badgeSet.versions[version]) {
-      badgeData = badgeSet.versions[version];
-    }
-    
-    if (badgeData) {
-      // Используем image_url_2x для лучшего качества
-      const imageUrl = badgeData.image_url_2x || badgeData.image_url_1x;
-      const title = badgeData.title || badgeId;
-      
-      html += `<img class="badge" src="${imageUrl}" alt="${esc(title)}" title="${esc(title)}" />`;
+    if (badgeUrl) {
+      html += `<img class="badge" src="${badgeUrl}" alt="${title}" title="${title}" />`;
+    } else {
+      // Для неизвестных значков (например, кастомные значки подписчиков канала)
+      // используем стандартный паттерн URL Twitch
+      const fallbackUrl = `https://static-cdn.jtvnw.net/badges/v1/${badgeId}/${version}/2`;
+      html += `<img class="badge" src="${fallbackUrl}" alt="${badgeId}" title="${badgeId}" onerror="this.style.display='none'" />`;
     }
   }
   
