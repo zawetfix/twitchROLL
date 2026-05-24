@@ -276,7 +276,6 @@ input[type=text]:disabled {
 .chat-msg .nick { font-weight: 700; margin-right: 4px; }
 .chat-msg .txt { color: rgba(255,255,255,0.85); }
 .chat-msg.kw {
-  border-left: 2px solid rgba(34,212,34,0.5);
   padding: 3px 8px; border-radius: 4px;
 }
 /* Twitch badges */
@@ -748,6 +747,7 @@ let caseSpinning = false;
 let sevenTVEmotes = {};
 let participationMode = 'keyword';
 let userScrolled = false; // track manual scroll in plist
+let chatPaused = false; // пауза чата при прокрутке вверх
 
 // ── COLORS ─────────────────────────────────────────────
 const COLORS = [
@@ -780,6 +780,14 @@ function setMode(mode) {
       // If user scrolled up (not at bottom), mark as manually scrolled
       const atBottom = plist.scrollHeight - plist.scrollTop - plist.clientHeight < 30;
       userScrolled = !atBottom;
+    });
+    
+    // Обработчик прокрутки для чата
+    const chatBox = document.getElementById('chat-box');
+    chatBox.addEventListener('scroll', () => {
+      // Если пользователь прокрутил вверх (не внизу), ставим на паузу
+      const atBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 30;
+      chatPaused = !atBottom;
     });
   });
 })();
@@ -1271,7 +1279,11 @@ function addChatMsg(nick, text, twitchEmotes, isKw, color, badges) {
   const box = document.getElementById('chat-box');
   box.appendChild(el);
   while (box.children.length > 200) box.removeChild(box.firstChild);
-  box.scrollTop = box.scrollHeight;
+  
+  // Автопрокрутка только если чат не на паузе
+  if (!chatPaused) {
+    box.scrollTop = box.scrollHeight;
+  }
 }
 
 function addWinnerMsg(nick, text, twitchEmotes, color) {
