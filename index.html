@@ -859,8 +859,11 @@ document.getElementById('btn-open-case').addEventListener('click', () => {
   const track = document.getElementById('case-track');
   track.innerHTML = '';
   
-  // Генерируем несколько карточек для предпросмотра
-  const previewCount = 5;
+  // Генерируем карточки для предпросмотра (столько, сколько влезет на экран)
+  const viewportWidth = window.innerWidth;
+  const cellW = 122; // ширина карточки + gap
+  const previewCount = Math.min(Math.floor(viewportWidth / cellW) + 2, participants.length);
+  
   for (let i = 0; i < previewCount; i++) {
     const randomIdx = Math.floor(Math.random() * participants.length);
     const nick = participants[randomIdx];
@@ -876,10 +879,9 @@ document.getElementById('btn-open-case').addEventListener('click', () => {
   }
   
   // Центрируем карточки
-  const viewportCenter = window.innerWidth / 2;
-  const cellW = 122;
+  const viewportCenter = viewportWidth / 2;
   const trackWidth = previewCount * cellW;
-  const centerOffset = viewportCenter - (trackWidth / 2);
+  const centerOffset = viewportCenter - (trackWidth / 2) + (cellW / 2);
   track.style.transition = 'none';
   track.style.transform = `translateX(${centerOffset}px)`;
   
@@ -902,11 +904,21 @@ document.getElementById('btn-pick').addEventListener('click', () => {
 
   const winIdx = Math.floor(Math.random() * participants.length);
   
-  // Получаем текущий трек и очищаем его
+  // Получаем текущий трек
   const track = document.getElementById('case-track');
-  const currentTransform = track.style.transform;
   
-  // Пересоздаём трек с победителем
+  // Сохраняем текущую позицию трека
+  const currentTransform = window.getComputedStyle(track).transform;
+  let currentX = 0;
+  if (currentTransform && currentTransform !== 'none') {
+    const matrix = currentTransform.match(/matrix\(([^)]+)\)/);
+    if (matrix) {
+      const values = matrix[1].split(',');
+      currentX = parseFloat(values[4]) || 0;
+    }
+  }
+  
+  // Очищаем трек
   track.innerHTML = '';
   
   const cellW = 122;
@@ -948,8 +960,8 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   const winnerCardPosition = centerPos * cellW + (cellW / 2);
   const finalX = viewportCenter - winnerCardPosition + randomOffset;
   
-  // Начальная позиция: справа от экрана, но карточки видны
-  const startX = viewportWidth - 300;
+  // Начальная позиция: используем текущую позицию или чуть правее центра
+  const startX = currentX || (viewportCenter + 100);
   
   // Устанавливаем начальную позицию мгновенно
   track.style.transition = 'none';
