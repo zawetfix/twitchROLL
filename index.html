@@ -273,7 +273,7 @@ input[type=text]:disabled {
   background: transparent !important;
 }
 @keyframes fadeUp { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
-.chat-msg .nick { font-weight: 700; margin-right: 4px; }
+.chat-msg .nick { font-weight: 400; margin-right: 4px; }
 .chat-msg .txt { color: rgba(255,255,255,0.85); }
 .chat-msg.kw {
   padding: 3px 8px; border-radius: 4px;
@@ -868,14 +868,16 @@ document.getElementById('btn-pick').addEventListener('click', () => {
 
   void track.offsetWidth;
 
-  const startX = targetX + 2200 + Math.random() * 400;
+  // Начинаем с видимой позиции (без пустого места слева)
+  const startX = 200;
   track.style.transform = `translateX(${startX}px)`;
   track.style.transition = 'none';
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      const duration = 9000 + Math.random() * 2000;
-      track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0, 0.08, 1)`;
+      // 5 секунд анимации, быстрый старт и медленный финиш
+      const duration = 5000;
+      track.style.transition = `transform ${duration}ms cubic-bezier(0.8, 0, 0.2, 1)`;
       track.style.transform = `translateX(${targetX}px)`;
     });
   });
@@ -906,7 +908,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
       document.getElementById('btn-pick').disabled = false;
       document.getElementById('btn-close-cm').disabled = false;
     }, 900);
-  }, 9000 + 2000);
+  }, 5000);
 });
 
 function revealWinner(name) {
