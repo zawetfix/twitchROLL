@@ -862,11 +862,17 @@ document.getElementById('btn-open-case').addEventListener('click', () => {
   // Генерируем карточки для предпросмотра (столько, сколько влезет на экран)
   const viewportWidth = window.innerWidth;
   const cellW = 122; // ширина карточки + gap
-  const previewCount = Math.min(Math.floor(viewportWidth / cellW) + 2, participants.length);
+  const minCards = Math.floor(viewportWidth / cellW) + 2; // минимум карточек для заполнения экрана
   
-  for (let i = 0; i < previewCount; i++) {
-    const randomIdx = Math.floor(Math.random() * participants.length);
-    const nick = participants[randomIdx];
+  // Если участников мало, повторяем их чтобы заполнить экран
+  const previewCards = [];
+  for (let i = 0; i < minCards; i++) {
+    const idx = i % participants.length; // циклически повторяем участников
+    previewCards.push(participants[idx]);
+  }
+  
+  // Создаём карточки
+  previewCards.forEach(nick => {
     const cell = document.createElement('div');
     cell.className = 'case-cell';
     const color = nickColor(nick);
@@ -876,11 +882,11 @@ document.getElementById('btn-open-case').addEventListener('click', () => {
       <div class="nick-lbl">${esc(nick)}</div>
     `;
     track.appendChild(cell);
-  }
+  });
   
   // Центрируем карточки
   const viewportCenter = viewportWidth / 2;
-  const trackWidth = previewCount * cellW;
+  const trackWidth = previewCards.length * cellW;
   const centerOffset = viewportCenter - (trackWidth / 2) + (cellW / 2);
   track.style.transition = 'none';
   track.style.transform = `translateX(${centerOffset}px)`;
@@ -921,7 +927,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   // Очищаем трек
   track.innerHTML = '';
   
-  const cellW = 122;
+  const cellW = 122; // ширина карточки (112px) + gap (10px)
   const totalCells = 100;
   const centerPos = Math.floor(totalCells * 0.75);
 
@@ -953,12 +959,16 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   const viewportWidth = window.innerWidth;
   const viewportCenter = viewportWidth / 2;
   
-  // Небольшое случайное смещение для реалистичности
-  const randomOffset = (Math.random() - 0.5) * 40;
+  // Небольшое случайное смещение для реалистичности (±15px)
+  const randomOffset = (Math.random() - 0.5) * 30;
   
-  // Финальная позиция: центр экрана совпадает с центром победной карточки
-  const winnerCardPosition = centerPos * cellW + (cellW / 2);
-  const finalX = viewportCenter - winnerCardPosition + randomOffset;
+  // ПРАВИЛЬНЫЙ расчёт финальной позиции:
+  // Позиция левого края победной карточки от начала трека
+  const winnerLeftEdge = centerPos * cellW;
+  // Центр победной карточки = левый край + половина ширины карточки
+  const winnerCenter = winnerLeftEdge + 56; // 56 = половина от 112px (ширина карточки без gap)
+  // Финальная позиция трека = центр экрана - центр победной карточки + смещение
+  const finalX = viewportCenter - winnerCenter + randomOffset;
   
   // Начальная позиция: используем текущую позицию или чуть правее центра
   const startX = currentX || (viewportCenter + 100);
