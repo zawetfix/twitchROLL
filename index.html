@@ -511,13 +511,15 @@ footer b { color: var(--orange); font-weight: 600; }
 .case-track-outer {
   overflow: hidden;
   padding: 14px 0;
+  position: relative;
 }
 .case-track {
   display: flex;
   gap: 10px;
-  padding: 0 calc(50% - 60px);
   will-change: transform;
   transition: none;
+  position: relative;
+  left: 0;
 }
 
 .case-cell {
@@ -811,9 +813,10 @@ function buildTrack(winnerIdx) {
   track.style.transition = 'none';
   track.style.transform = 'translateX(0)';
 
+  // Ширина одной ячейки = 112px (ширина) + 10px (gap)
   const cellW = 122;
-  const totalCells = 80; // Увеличиваем количество карточек для более длинной анимации
-  const centerPos = Math.floor(totalCells * 0.7); // Победитель ближе к концу
+  const totalCells = 100; // Много карточек для длинной анимации
+  const centerPos = Math.floor(totalCells * 0.75); // Победитель в конце (75% от всех карточек)
 
   const cells = [];
   
@@ -851,7 +854,35 @@ function buildTrack(winnerIdx) {
 document.getElementById('btn-open-case').addEventListener('click', () => {
   const n = participants.length;
   document.getElementById('cm-count').textContent = `${n} участник${plu(n)}`;
-  buildTrack(0);
+  
+  // Создаём начальный трек с карточками по центру
+  const track = document.getElementById('case-track');
+  track.innerHTML = '';
+  
+  // Генерируем несколько карточек для предпросмотра
+  const previewCount = 5;
+  for (let i = 0; i < previewCount; i++) {
+    const randomIdx = Math.floor(Math.random() * participants.length);
+    const nick = participants[randomIdx];
+    const cell = document.createElement('div');
+    cell.className = 'case-cell';
+    const color = nickColor(nick);
+    const letter = nick[0].toUpperCase();
+    cell.innerHTML = `
+      <div class="av" style="background:${color}22;border-color:${color}66;color:${color}">${esc(letter)}</div>
+      <div class="nick-lbl">${esc(nick)}</div>
+    `;
+    track.appendChild(cell);
+  }
+  
+  // Центрируем карточки
+  const viewportCenter = window.innerWidth / 2;
+  const cellW = 122;
+  const trackWidth = previewCount * cellW;
+  const centerOffset = viewportCenter - (trackWidth / 2);
+  track.style.transition = 'none';
+  track.style.transform = `translateX(${centerOffset}px)`;
+  
   document.getElementById('case-modal').classList.add('show');
 });
 
@@ -870,32 +901,71 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   document.getElementById('btn-close-cm').disabled = true;
 
   const winIdx = Math.floor(Math.random() * participants.length);
-  const { track, centerPos, cellW } = buildTrack(winIdx);
+  
+  // Получаем текущий трек и очищаем его
+  const track = document.getElementById('case-track');
+  const currentTransform = track.style.transform;
+  
+  // Пересоздаём трек с победителем
+  track.innerHTML = '';
+  
+  const cellW = 122;
+  const totalCells = 100;
+  const centerPos = Math.floor(totalCells * 0.75);
 
+  // Создаём все карточки
+  for (let i = 0; i < totalCells; i++) {
+    let nick;
+    if (i === centerPos) {
+      nick = participants[winIdx];
+    } else {
+      let randomIdx;
+      do {
+        randomIdx = Math.floor(Math.random() * participants.length);
+      } while (randomIdx === winIdx && participants.length > 1);
+      nick = participants[randomIdx];
+    }
+    
+    const cell = document.createElement('div');
+    cell.className = 'case-cell';
+    const color = nickColor(nick);
+    const letter = nick[0].toUpperCase();
+    cell.innerHTML = `
+      <div class="av" style="background:${color}22;border-color:${color}66;color:${color}">${esc(letter)}</div>
+      <div class="nick-lbl">${esc(nick)}</div>
+    `;
+    track.appendChild(cell);
+  }
+
+  // Получаем ширину окна для расчётов
+  const viewportWidth = window.innerWidth;
+  const viewportCenter = viewportWidth / 2;
+  
   // Небольшое случайное смещение для реалистичности
-  const randomOffset = (Math.random() - 0.5) * 30;
+  const randomOffset = (Math.random() - 0.5) * 40;
   
-  // Вычисляем финальную позицию (центр окна минус позиция победителя)
-  const viewportCenter = window.innerWidth / 2;
-  const targetX = viewportCenter - (centerPos * cellW) - (cellW / 2) + randomOffset;
-
-  // Начальная позиция - далеко справа, чтобы карточки были видны
-  const startX = window.innerWidth + 500;
+  // Финальная позиция: центр экрана совпадает с центром победной карточки
+  const winnerCardPosition = centerPos * cellW + (cellW / 2);
+  const finalX = viewportCenter - winnerCardPosition + randomOffset;
   
-  // Устанавливаем начальную позицию без анимации
+  // Начальная позиция: справа от экрана, но карточки видны
+  const startX = viewportWidth - 300;
+  
+  // Устанавливаем начальную позицию мгновенно
   track.style.transition = 'none';
   track.style.transform = `translateX(${startX}px)`;
   
   // Принудительный reflow
-  void track.offsetWidth;
+  void track.offsetHeight;
 
-  // Запускаем анимацию через небольшую задержку
-  setTimeout(() => {
-    // 8 секунд плавной анимации с замедлением в конце
-    const duration = 8000;
-    track.style.transition = `transform ${duration}ms cubic-bezier(0.17, 0.67, 0.35, 0.96)`;
-    track.style.transform = `translateX(${targetX}px)`;
-  }, 50);
+  // Запускаем анимацию
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const duration = 7000;
+      track.style.transition = `transform ${duration}ms cubic-bezier(0.15, 0.5, 0.2, 1)`;
+      track.style.transform = `translateX(${finalX}px)`;
+    });
+  });
 
   // Когда анимация закончится
   setTimeout(() => {
@@ -925,8 +995,8 @@ document.getElementById('btn-pick').addEventListener('click', () => {
       revealWinner(pickedName);
       document.getElementById('btn-pick').disabled = false;
       document.getElementById('btn-close-cm').disabled = false;
-    }, 1000);
-  }, 8100);
+    }, 1200);
+  }, 7100);
 });
 
 function revealWinner(name) {
