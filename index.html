@@ -969,14 +969,14 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   const rect = caseWindow.getBoundingClientRect();
   const viewportCenter = rect.width / 2;
   
-  // Небольшое случайное смещение для реалистичности (±15px)
-  const randomOffset = (Math.random() - 0.5) * 30;
+  // Убираем случайное смещение - оно сбивает точное попадание
+  const randomOffset = 0;
   
   // ПРАВИЛЬНЫЙ расчёт финальной позиции:
   // Позиция левого края победной карточки от начала трека
   const winnerLeftEdge = centerPos * cellW;
-  // Центр победной карточки = левый край + половина ЧИСТОЙ ширины карточки (без gap)
-  const winnerCenter = winnerLeftEdge + (cardWidth / 2);
+  // Центр победной карточки = левый край + половина ЯЧЕЙКИ (с учетом gap)
+  const winnerCenter = winnerLeftEdge + (cellW / 2);
   // Финальная позиция трека = центр КОНТЕЙНЕРА - центр победной карточки + смещение
   const finalX = (rect.width / 2) - winnerCenter + randomOffset;
   
@@ -1035,9 +1035,9 @@ document.getElementById('btn-pick').addEventListener('click', () => {
     const viewportCenter = rect.width / 2;
     cells.forEach((cell, idx) => {
       const cellLeft = idx * cellW + finalTrackX;
-      const cellCenter = cellLeft + (cardWidth / 2); // центр карточки (без учета gap)
+      const cellCenter = cellLeft + (cellW / 2); // центр ячейки (с учетом gap)
       const distanceFromCenter = Math.abs(cellCenter - viewportCenter);
-      if (distanceFromCenter < (cardWidth / 2 + 5)) { // если карточка близко к центру
+      if (distanceFromCenter < (cellW / 2 + 5)) { // если карточка близко к центру
         const nickEl = cell.querySelector('.nick-lbl');
         const nickText = nickEl ? nickEl.textContent : 'unknown';
         console.log(`🎯 Карточка ${idx} в центре экрана:`, nickText, 'расстояние от центра:', distanceFromCenter.toFixed(2));
