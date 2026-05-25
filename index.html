@@ -978,6 +978,15 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   // Финальная позиция трека = центр экрана - центр победной карточки + смещение
   const finalX = viewportCenter - winnerCenter + randomOffset;
   
+  console.log('📐 РАСЧЕТЫ:');
+  console.log('  centerPos:', centerPos);
+  console.log('  cellW:', cellW);
+  console.log('  winnerLeftEdge:', winnerLeftEdge);
+  console.log('  winnerCenter:', winnerCenter);
+  console.log('  viewportCenter:', viewportCenter);
+  console.log('  randomOffset:', randomOffset);
+  console.log('  finalX:', finalX);
+  
   // Начальная позиция: используем текущую позицию или чуть правее центра
   const startX = currentX || (viewportCenter + 100);
   
@@ -1003,9 +1012,35 @@ document.getElementById('btn-pick').addEventListener('click', () => {
     // pickedName и winnerName уже установлены выше
     
     console.log('✅ АНИМАЦИЯ ЗАВЕРШЕНА. Победитель:', pickedName);
+    
+    // Проверяем какая карточка реально в центре
+    const cells = track.querySelectorAll('.case-cell');
+    const finalTransform = window.getComputedStyle(track).transform;
+    let finalTrackX = 0;
+    if (finalTransform && finalTransform !== 'none') {
+      const matrix = finalTransform.match(/matrix\(([^)]+)\)/);
+      if (matrix) {
+        const values = matrix[1].split(',');
+        finalTrackX = parseFloat(values[4]) || 0;
+      }
+    }
+    
+    console.log('📍 Финальная позиция трека:', finalTrackX);
+    
+    // Находим карточку которая визуально в центре экрана
+    const viewportCenter = window.innerWidth / 2;
+    cells.forEach((cell, idx) => {
+      const cellLeft = idx * cellW + finalTrackX;
+      const cellCenter = cellLeft + 56; // центр карточки
+      const distanceFromCenter = Math.abs(cellCenter - viewportCenter);
+      if (distanceFromCenter < 61) { // если карточка близко к центру (половина ширины карточки)
+        const nickEl = cell.querySelector('.nick-lbl');
+        const nickText = nickEl ? nickEl.textContent : 'unknown';
+        console.log(`🎯 Карточка ${idx} в центре экрана:`, nickText, 'расстояние от центра:', distanceFromCenter.toFixed(2));
+      }
+    });
 
     // Подсвечиваем победителя
-    const cells = track.querySelectorAll('.case-cell');
     cells.forEach((c, i) => c.classList.toggle('highlight', i === centerPos));
 
     // Удаляем победителя из списка если включена опция
