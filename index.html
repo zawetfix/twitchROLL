@@ -934,6 +934,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   track.innerHTML = '';
   
   const cellW = 122; // ширина карточки (112px) + gap (10px)
+  const cardWidth = 112; // чистая ширина карточки без gap
   const totalCells = 100;
   const centerPos = Math.floor(totalCells * 0.75);
 
@@ -973,14 +974,15 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   // ПРАВИЛЬНЫЙ расчёт финальной позиции:
   // Позиция левого края победной карточки от начала трека
   const winnerLeftEdge = centerPos * cellW;
-  // Центр победной карточки = левый край + половина ширины карточки
-  const winnerCenter = winnerLeftEdge + 56; // 56 = половина от 112px (ширина карточки без gap)
+  // Центр победной карточки = левый край + половина ЧИСТОЙ ширины карточки (без gap)
+  const winnerCenter = winnerLeftEdge + (cardWidth / 2);
   // Финальная позиция трека = центр экрана - центр победной карточки + смещение
   const finalX = viewportCenter - winnerCenter + randomOffset;
   
   console.log('📐 РАСЧЕТЫ:');
   console.log('  centerPos:', centerPos);
   console.log('  cellW:', cellW);
+  console.log('  cardWidth:', cardWidth);
   console.log('  winnerLeftEdge:', winnerLeftEdge);
   console.log('  winnerCenter:', winnerCenter);
   console.log('  viewportCenter:', viewportCenter);
@@ -1031,9 +1033,9 @@ document.getElementById('btn-pick').addEventListener('click', () => {
     const viewportCenter = window.innerWidth / 2;
     cells.forEach((cell, idx) => {
       const cellLeft = idx * cellW + finalTrackX;
-      const cellCenter = cellLeft + 56; // центр карточки
+      const cellCenter = cellLeft + (cardWidth / 2); // центр карточки (без учета gap)
       const distanceFromCenter = Math.abs(cellCenter - viewportCenter);
-      if (distanceFromCenter < 61) { // если карточка близко к центру (половина ширины карточки)
+      if (distanceFromCenter < (cardWidth / 2 + 5)) { // если карточка близко к центру
         const nickEl = cell.querySelector('.nick-lbl');
         const nickText = nickEl ? nickEl.textContent : 'unknown';
         console.log(`🎯 Карточка ${idx} в центре экрана:`, nickText, 'расстояние от центра:', distanceFromCenter.toFixed(2));
