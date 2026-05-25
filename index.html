@@ -1420,10 +1420,19 @@ function parseMsg(raw, kw) {
   const alreadyIn = participants.some(p => p.toLowerCase() === lowerNick);
   const inBlacklist = blacklist.has(lowerNick);
 
-  if (qualifies && !inBlacklist && !alreadyIn) {
+  // Не добавляем новых участников пока рулетка крутится
+  if (qualifies && !inBlacklist && !alreadyIn && !caseSpinning) {
     participants.push(nick);
     document.getElementById('s-part').textContent = participants.length;
     document.getElementById('ph-part-count').textContent = participants.length;
+    
+    // Обновляем счетчик в модальном окне рулетки если оно открыто
+    const caseModal = document.getElementById('case-modal');
+    if (caseModal && caseModal.classList.contains('show')) {
+      const n = participants.length;
+      document.getElementById('cm-count').textContent = `${n} участник${plu(n)}`;
+    }
+    
     renderParticipants();
     document.getElementById('btn-open-case').disabled = false;
   }
