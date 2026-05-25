@@ -964,9 +964,10 @@ document.getElementById('btn-pick').addEventListener('click', () => {
     track.appendChild(cell);
   }
 
-  // Получаем ширину окна для расчётов
-  const viewportWidth = window.innerWidth;
-  const viewportCenter = viewportWidth / 2;
+  // Получаем ширину КОНТЕЙНЕРА рулетки (не всего окна!)
+  const caseWindow = track.closest('.case-window') || track.parentElement;
+  const rect = caseWindow.getBoundingClientRect();
+  const viewportCenter = rect.width / 2;
   
   // Небольшое случайное смещение для реалистичности (±15px)
   const randomOffset = (Math.random() - 0.5) * 30;
@@ -976,8 +977,8 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   const winnerLeftEdge = centerPos * cellW;
   // Центр победной карточки = левый край + половина ЧИСТОЙ ширины карточки (без gap)
   const winnerCenter = winnerLeftEdge + (cardWidth / 2);
-  // Финальная позиция трека = центр экрана - центр победной карточки + смещение
-  const finalX = viewportCenter - winnerCenter + randomOffset;
+  // Финальная позиция трека = центр КОНТЕЙНЕРА - центр победной карточки + смещение
+  const finalX = (rect.width / 2) - winnerCenter + randomOffset;
   
   console.log('📐 РАСЧЕТЫ:');
   console.log('  centerPos:', centerPos);
@@ -985,6 +986,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   console.log('  cardWidth:', cardWidth);
   console.log('  winnerLeftEdge:', winnerLeftEdge);
   console.log('  winnerCenter:', winnerCenter);
+  console.log('  rect.width (контейнер):', rect.width);
   console.log('  viewportCenter:', viewportCenter);
   console.log('  randomOffset:', randomOffset);
   console.log('  finalX:', finalX);
@@ -1030,7 +1032,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
     console.log('📍 Финальная позиция трека:', finalTrackX);
     
     // Находим карточку которая визуально в центре экрана
-    const viewportCenter = window.innerWidth / 2;
+    const viewportCenter = rect.width / 2;
     cells.forEach((cell, idx) => {
       const cellLeft = idx * cellW + finalTrackX;
       const cellCenter = cellLeft + (cardWidth / 2); // центр карточки (без учета gap)
