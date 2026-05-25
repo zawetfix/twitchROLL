@@ -913,6 +913,9 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   const pickedName = participants[winIdx];
   winnerName = pickedName; // Устанавливаем сразу, чтобы сообщения победителя отображались
   
+  console.log('🎰 ВЫБРАН ПОБЕДИТЕЛЬ:', pickedName, 'индекс:', winIdx, 'из', participants.length, 'участников');
+  console.log('📋 Массив участников:', participants);
+  
   // Получаем текущий трек
   const track = document.getElementById('case-track');
   
@@ -940,6 +943,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
     if (i === centerPos) {
       // ИСПРАВЛЕНИЕ БАГА 1: Используем pickedName вместо participants[winIdx]
       nick = pickedName;
+      console.log('🏆 Карточка победителя на позиции', i, ':', nick);
     } else {
       let randomIdx;
       do {
@@ -997,6 +1001,8 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   setTimeout(() => {
     caseSpinning = false;
     // pickedName и winnerName уже установлены выше
+    
+    console.log('✅ АНИМАЦИЯ ЗАВЕРШЕНА. Победитель:', pickedName);
 
     // Подсвечиваем победителя
     const cells = track.querySelectorAll('.case-cell');
@@ -1026,6 +1032,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
 
 function revealWinner(name) {
   winner = name;
+  console.log('🎉 ПОКАЗЫВАЕМ ПОБЕДИТЕЛЯ:', name);
   document.getElementById('wb-name').textContent = name;
   document.getElementById('wch-name').textContent = name;
   document.getElementById('winner-overlay').classList.add('show');
