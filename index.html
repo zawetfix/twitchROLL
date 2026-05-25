@@ -908,7 +908,10 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   document.getElementById('btn-pick').disabled = true;
   document.getElementById('btn-close-cm').disabled = true;
 
+  // ИСПРАВЛЕНИЕ БАГА 1: Выбираем победителя СРАЗУ и устанавливаем winnerName
   const winIdx = Math.floor(Math.random() * participants.length);
+  const pickedName = participants[winIdx];
+  winnerName = pickedName; // Устанавливаем сразу, чтобы сообщения победителя отображались
   
   // Получаем текущий трек
   const track = document.getElementById('case-track');
@@ -935,7 +938,8 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   for (let i = 0; i < totalCells; i++) {
     let nick;
     if (i === centerPos) {
-      nick = participants[winIdx];
+      // ИСПРАВЛЕНИЕ БАГА 1: Используем pickedName вместо participants[winIdx]
+      nick = pickedName;
     } else {
       let randomIdx;
       do {
@@ -992,8 +996,7 @@ document.getElementById('btn-pick').addEventListener('click', () => {
   // Когда анимация закончится
   setTimeout(() => {
     caseSpinning = false;
-    const pickedName = participants[winIdx];
-    winnerName = pickedName;
+    // pickedName и winnerName уже установлены выше
 
     // Подсвечиваем победителя
     const cells = track.querySelectorAll('.case-cell');
